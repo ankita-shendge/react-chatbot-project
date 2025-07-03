@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
-import { URL } from "./constants";
 import RecentSearch from "./components/RecentSearch";
 import QuestionAnswer from "./components/QuestionAnswer";
 
 function App() {
+  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${
+    import.meta.env.VITE_API_KEY
+  }`;
+
   const [question, setQuestion] = useState("");
   const [result, setResult] = useState([]);
   const [recentHistory, setRecentHistory] = useState(
@@ -46,13 +49,17 @@ function App() {
     };
 
     setLoader(true);
-    let response = await fetch(URL, {
+    let response = await fetch(API_URL, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(payload),
     });
 
     response = await response.json();
     let dataString = response.candidates[0].content.parts[0].text;
+    console.log(dataString);
     dataString = dataString.split("* ");
     dataString = dataString.map((item) => item.trim());
 
